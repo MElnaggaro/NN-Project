@@ -105,11 +105,48 @@ analyzeBtn.addEventListener("click", async () => {
 	result.classList.add("hidden");
 
 	const emotion = await predictEmotion(previewImage);
+	const angryGifContainer = document.getElementById("angryGifContainer");
+	const disgustGifContainer = document.getElementById("disgustGifContainer");
+	const fearGifContainer = document.getElementById("fearGifContainer");
+	const happyGifContainer = document.getElementById("happyGifContainer");
+	const neutralGifContainer = document.getElementById("neutralGifContainer");
+	const sadGifContainer = document.getElementById("sadGifContainer");
+	const surpriseGifContainer = document.getElementById("surpriseGifContainer");
 
 	loading.classList.add("hidden");
 
 	emotionLabel.textContent = emotion;
-	emotionEmoji.textContent = EMOJI_MAP[emotion];
+
+	// Hide all GIF containers and emoji first
+	emotionEmoji.classList.add("hidden");
+	angryGifContainer.classList.add("hidden");
+	disgustGifContainer.classList.add("hidden");
+	fearGifContainer.classList.add("hidden");
+	happyGifContainer.classList.add("hidden");
+	neutralGifContainer.classList.add("hidden");
+	sadGifContainer.classList.add("hidden");
+	surpriseGifContainer.classList.add("hidden");
+
+	// Handle different emotions
+	if (emotion === "Angry") {
+		angryGifContainer.classList.remove("hidden");
+	} else if (emotion === "Disgust") {
+		disgustGifContainer.classList.remove("hidden");
+	} else if (emotion === "Fear") {
+		fearGifContainer.classList.remove("hidden");
+	} else if (emotion === "Happy") {
+		happyGifContainer.classList.remove("hidden");
+	} else if (emotion === "Neutral") {
+		neutralGifContainer.classList.remove("hidden");
+	} else if (emotion === "Sad") {
+		sadGifContainer.classList.remove("hidden");
+	} else if (emotion === "Surprise") {
+		surpriseGifContainer.classList.remove("hidden");
+	} else {
+		// If we add more emotions in the future, they'll show the emoji by default
+		emotionEmoji.textContent = EMOJI_MAP[emotion];
+		emotionEmoji.classList.remove("hidden");
+	}
+
 	result.classList.remove("hidden");
 });
-
