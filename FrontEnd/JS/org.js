@@ -143,8 +143,8 @@ analyzeBtn.addEventListener("click", async () => {
 	} else if (emotion === "Surprise") {
 		surpriseGifContainer.classList.remove("hidden");
 	} else {
-		// If we add more emotions in the future, they'll show the emoji by default
-		emotionEmoji.textContent = EMOJI_MAP[emotion];
+		// For any other emotions (if added in the future), show emoji
+		emotionEmoji.textContent = EMOJI_MAP[emotion] || "❓";
 		emotionEmoji.classList.remove("hidden");
 	}
 
