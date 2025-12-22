@@ -105,9 +105,43 @@
       </div>
 
       <!-- Analyze Button -->
-      <button class="analyze-btn" id="analyzeBtn" disabled>
-        Analyze Emotion
-      </button>
+      <div class="post888-mecha">
+        <input id="analyzeBtn" class="post888-mecha__toggle" type="checkbox" disabled />
+
+        <label
+          class="post888-mecha__frame"
+          for="analyzeBtn"
+          aria-label="Analyze Emotion"
+          id="analyzeBtnLabel"
+        >
+          <div class="post888-mecha__arm">
+            <div class="post888-mecha__arm-base"></div>
+            <div class="post888-mecha__arm-joint"></div>
+            <div class="post888-mecha__arm-fore"></div>
+            <div class="post888-mecha__claw">
+              <div
+                class="post888-mecha__claw-finger post888-mecha__claw-finger--top"
+              ></div>
+              <div
+                class="post888-mecha__claw-finger post888-mecha__claw-finger--bottom"
+              ></div>
+            </div>
+          </div>
+
+          <div class="post888-mecha__button">
+            <div class="post888-mecha__button-face">
+              <span class="post888-mecha__text post888-mecha__text--on"
+                >ANALYZING</span
+              >
+              <span class="post888-mecha__text post888-mecha__text--off"
+                >ANALYZE</span
+              >
+            </div>
+          </div>
+
+          <div class="post888-mecha__led"></div>
+        </label>
+      </div>
 
       <!-- Result -->
       <div class="result hidden" id="result">
