@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from tensorflow.keras.models import load_model
 import numpy as np
@@ -27,13 +27,8 @@ print("=" * 60)
 print("MODEL READY")
 print("=" * 60 + "\n")
 
-
 # ===================== PREPROCESS =====================
 def preprocess_image(image_data):
-    """
-    Preprocess image for model input
-    NOTE: Rescaling is already inside the model
-    """
     # Decode base64
     img_data = base64.b64decode(image_data.split(',')[1])
     img = Image.open(io.BytesIO(img_data))
@@ -41,10 +36,10 @@ def preprocess_image(image_data):
     # Convert to grayscale
     img = img.convert('L')
 
-    # Resize
+    # Resize to model input size
     img = img.resize((48, 48))
 
-    # To numpy
+    # Convert to numpy
     img_array = np.array(img, dtype=np.float32)
 
     # Shape: (1, 48, 48, 1)
@@ -52,12 +47,13 @@ def preprocess_image(image_data):
 
     return img_array
 
-
 # ===================== ROUTES =====================
 @app.route('/')
-def index():
-    return render_template('index.html')
-
+def home():
+    return jsonify({
+        "message": "Emotion Recognition API is running",
+        "endpoints": ["/predict", "/health"]
+    })
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -69,7 +65,6 @@ def predict():
             return jsonify({'error': 'No image provided'}), 400
 
         processed_image = preprocess_image(image_data)
-
         predictions = model.predict(processed_image, verbose=0)
 
         emotion_index = int(np.argmax(predictions[0]))
@@ -90,7 +85,6 @@ def predict():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({
@@ -99,14 +93,13 @@ def health():
         'emotions': EMOTIONS
     })
 
-
 # ===================== RUN SERVER =====================
 if __name__ == '__main__':
     print("\n" + "=" * 60)
     print("🚀 FLASK SERVER RUNNING")
     print("=" * 60)
-    print("Server : http://localhost:5000")
-    print("Health : http://localhost:5000/health")
+    print("Health : /health")
+    print("Predict: /predict")
     print("=" * 60 + "\n")
 
-    app.run(debug=True, port=5000, host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5000)
