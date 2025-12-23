@@ -29,12 +29,10 @@ const closeButton = document.getElementById("closeButton");
 
 // Close button functionality
 closeButton.addEventListener("click", () => {
-	// Add animation classes
 	floatingWindow.style.transition = "all 0.5s ease-in-out";
 	floatingWindow.style.transform = "translateY(-100%)";
 	floatingWindow.style.opacity = "0";
 
-	// Remove the element after animation completes
 	setTimeout(() => {
 		floatingWindow.style.display = "none";
 	}, 500);
@@ -86,17 +84,39 @@ function handleImage(file) {
 }
 
 // ==========================
-// Placeholder Model Function
+// Real Model Prediction Function
 // ==========================
-function predictEmotion(imageElement) {
-	// TODO: Replace with real model inference
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			const randomEmotion =
-				EMOTIONS[Math.floor(Math.random() * EMOTIONS.length)];
-			resolve(randomEmotion);
-		}, 1000);
-	});
+async function predictEmotion(imageElement) {
+	try {
+		// Get the image as base64
+		const canvas = document.createElement("canvas");
+		canvas.width = imageElement.naturalWidth;
+		canvas.height = imageElement.naturalHeight;
+		const ctx = canvas.getContext("2d");
+		ctx.drawImage(imageElement, 0, 0);
+		const imageData = canvas.toDataURL("image/jpeg");
+
+		// Send to Flask API
+		const response = await fetch("http://localhost:5000/predict", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ image: imageData }),
+		});
+
+		if (!response.ok) {
+			throw new Error("Prediction failed");
+		}
+
+		const data = await response.json();
+		console.log("Prediction results:", data); // للتحقق من النتائج
+		return data.emotion;
+	} catch (error) {
+		console.error("Error:", error);
+		alert("حدث خطأ في التحليل. تأكد من تشغيل Flask server");
+		return "Neutral"; // Default emotion in case of error
+	}
 }
 
 // Analyze button
@@ -143,7 +163,6 @@ analyzeBtn.addEventListener("click", async () => {
 	} else if (emotion === "Surprise") {
 		surpriseGifContainer.classList.remove("hidden");
 	} else {
-		// For any other emotions (if added in the future), show emoji
 		emotionEmoji.textContent = EMOJI_MAP[emotion] || "❓";
 		emotionEmoji.classList.remove("hidden");
 	}
