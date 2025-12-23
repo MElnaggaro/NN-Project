@@ -26,7 +26,7 @@ const EMOJI_MAP = {
 // ==========================
 // API URL (Colab Flask)
 // ==========================
-const API_URL = "https://keshia-intergradational-deprecatorily.ngrok-free.dev";
+const API_URL = "https://keshia-intergradational-deprecatorily.ngrok-free.dev/";
 
 // ==========================
 // DOM Elements
