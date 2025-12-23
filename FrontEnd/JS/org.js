@@ -23,19 +23,22 @@ const EMOJI_MAP = {
 	Surprise: "😲",
 };
 
+// ==========================
+// API URL (Colab Flask)
+// ==========================
+const API_URL = "https://keshia-intergradational-deprecatorily.ngrok-free.dev";
+
+// ==========================
 // DOM Elements
+// ==========================
 const floatingWindow = document.getElementById("floatingWindow");
 const closeButton = document.getElementById("closeButton");
 
-// Close button functionality
 closeButton.addEventListener("click", () => {
 	floatingWindow.style.transition = "all 0.5s ease-in-out";
 	floatingWindow.style.transform = "translateY(-100%)";
 	floatingWindow.style.opacity = "0";
-
-	setTimeout(() => {
-		floatingWindow.style.display = "none";
-	}, 500);
+	setTimeout(() => (floatingWindow.style.display = "none"), 500);
 });
 
 const uploadArea = document.getElementById("uploadArea");
@@ -48,7 +51,9 @@ const result = document.getElementById("result");
 const emotionLabel = document.getElementById("emotionLabel");
 const emotionEmoji = document.getElementById("emotionEmoji");
 
-// Upload handlers
+// ==========================
+// Upload Handlers
+// ==========================
 uploadArea.addEventListener("click", () => imageInput.click());
 
 uploadArea.addEventListener("dragover", (e) => {
@@ -84,57 +89,56 @@ function handleImage(file) {
 }
 
 // ==========================
-// Real Model Prediction Function
+// Prediction Function
 // ==========================
 async function predictEmotion(imageElement) {
 	try {
-		// Get the image as base64
+		// Convert image to Base64
 		const canvas = document.createElement("canvas");
 		canvas.width = imageElement.naturalWidth;
 		canvas.height = imageElement.naturalHeight;
+
 		const ctx = canvas.getContext("2d");
 		ctx.drawImage(imageElement, 0, 0);
+
 		const imageData = canvas.toDataURL("image/jpeg");
 
-		// Send to Flask API
-		const response = await fetch("http://localhost:5000/predict", {
+		// Send request to Flask API
+		const response = await fetch(`${API_URL}/predict`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ image: imageData }),
+			body: JSON.stringify({
+				image: imageData,
+			}),
 		});
 
 		if (!response.ok) {
-			throw new Error("Prediction failed");
+			throw new Error("Server error");
 		}
 
 		const data = await response.json();
-		console.log("Prediction results:", data); // للتحقق من النتائج
+		console.log("API Response:", data);
+
 		return data.emotion;
 	} catch (error) {
-		console.error("Error:", error);
-		alert("حدث خطأ في التحليل. تأكد من تشغيل Flask server");
-		return "Neutral"; // Default emotion in case of error
+		console.error("Prediction error:", error);
+		alert("حصل خطأ، تأكد إن السيرفر شغال على Colab");
+		return "Neutral";
 	}
 }
 
-// Analyze button
+// ==========================
+// Analyze Button
+// ==========================
 analyzeBtn.addEventListener("click", async () => {
 	loading.classList.remove("hidden");
 	result.classList.add("hidden");
 
 	const emotion = await predictEmotion(previewImage);
-	const angryGifContainer = document.getElementById("angryGifContainer");
-	const disgustGifContainer = document.getElementById("disgustGifContainer");
-	const fearGifContainer = document.getElementById("fearGifContainer");
-	const happyGifContainer = document.getElementById("happyGifContainer");
-	const neutralGifContainer = document.getElementById("neutralGifContainer");
-	const sadGifContainer = document.getElementById("sadGifContainer");
-	const surpriseGifContainer = document.getElementById("surpriseGifContainer");
 
 	loading.classList.add("hidden");
-
 	emotionLabel.textContent = emotion;
 
 	// Hide all GIF containers and emoji first
